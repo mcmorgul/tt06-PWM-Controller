@@ -5,28 +5,48 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles
 
+
 @cocotb.test()
-async def test_adder(dut):
-  dut._log.info("Start")
-  
-  # Our example module doesn't use clock and reset, but we show how to use them here anyway.
-  clock = Clock(dut.clk, 10, units="us")
-  cocotb.start_soon(clock.start())
+async def test_loopback(dut):
+    dut._log.info("Start")
 
-  # Reset
-  dut._log.info("Reset")
-  dut.ena.value = 1
-  dut.ui_in.value = 0
-  dut.uio_in.value = 0
-  dut.rst_n.value = 0
-  await ClockCycles(dut.clk, 10)
-  dut.rst_n.value = 1
+    clock = Clock(dut.clk, 10, units="us")
+    cocotb.start_soon(clock.start())
 
-  # Set the input values, wait one clock cycle, and check the output
-  dut._log.info("Test")
-  dut.ui_in.value = 20
-  dut.uio_in.value = 30
+    # Reset
+    dut._log.info("Reset")
+    dut.ena.value = 1
 
-  await ClockCycles(dut.clk, 1)
+    # ui_in[0] == 0: Copy bidirectional pins to outputs
+    dut.ui_in.value = 0b0
+    dut.uio_in.value = 0
+    dut.rst_n.value = 0
+    await ClockCycles(dut.clk, 10)
+    dut.rst_n.value = 1
 
-  assert dut.uo_out.value == 50
+    for i in range(256):
+        dut.uio_in.value = i
+        await ClockCycles(dut.clk, 1)
+        assert dut.uo_out.value == i
+
+
+@cocotb.test()
+async def test_counter(dut):
+    dut._log.info("Start")
+
+    clock = Clock(dut.clk, 10, units="us")
+    cocotb.start_soon(clock.start())
+
+    # ui_in[0] == 1: bidirectional outputs enabled, put a counter on both output and bidirectional pins
+    dut.ui_in.value = 0b1
+    dut.uio_in.value = 0
+    dut.rst_n.value = 0
+    await ClockCycles(dut.clk, 10)
+    dut.rst_n.value = 1
+    await ClockCycles(dut.clk, 2)
+
+    dut._log.info("Testing counter")
+    for i in range(256):
+        assert dut.uo_out.value == dut.uio_out.value
+        assert dut.uo_out.value == i
+        await ClockCycles(dut.clk, 1)
