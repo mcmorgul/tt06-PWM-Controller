@@ -58,7 +58,7 @@ module tt_um_Ziyi_Yuchen
     counter_PWM <= 0;
  end
  assign PWM_OUT = counter_PWM < DUTY_CYCLE ? 1:0;
- assign uo_out = 8’b0;
+ assign uo_out = 8'b0;
  assign uio_out = {7'b0, PWM_OUT};
  assign uio_oe = 8'b1;
 endmodule
