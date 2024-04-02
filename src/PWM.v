@@ -1,4 +1,4 @@
-module PWM_Generator_Verilog
+module tt_um_Ziyi_Yuchen
  (
 	input  wire [7:0] ui_in,	// Dedicated inputs
 	output wire [7:0] uo_out,	// Dedicated outputs
