@@ -1,5 +1,4 @@
-`default_nettype none
-module tt_um_Ziyi_Yuchen
+module PWM_Generator_Verilog
  (
 	input  wire [7:0] ui_in,	// Dedicated inputs
 	output wire [7:0] uo_out,	// Dedicated outputs
@@ -10,6 +9,13 @@ module tt_um_Ziyi_Yuchen
 	input  wire       clk,
 	input  wire       rst_n
     );
+
+ wire increase_duty = ui_in[0];
+ wire decrease_duty = ui_in[1];
+ reg PWM_OUT;
+ assign uo_out = 0;
+ assign uio_out = {7'b0, PWM_OUT};
+ assign uio_oe = 8'b1
  wire slow_clk_enable; // slow clock enable signal for debouncing FFs
  reg[27:0] counter_debounce=0;// counter for creating slow clock enable signals 
  wire tmp1,tmp2,duty_inc;// temporary flip-flop signals for debouncing the increasing button
@@ -32,11 +38,11 @@ module tt_um_Ziyi_Yuchen
  assign slow_clk_enable = counter_debounce == 1 ?1:0;
  // for running simulation -- comment when running on FPGA
  // debouncing FFs for increasing button
- DFF_PWM PWM_DFF1(clk,slow_clk_enable,ui_in,tmp1);
+ DFF_PWM PWM_DFF1(clk,slow_clk_enable,increase_duty,tmp1);
  DFF_PWM PWM_DFF2(clk,slow_clk_enable,tmp1, tmp2); 
  assign duty_inc =  tmp1 & (~ tmp2) & slow_clk_enable;
  // debouncing FFs for decreasing button
- DFF_PWM PWM_DFF3(clk,slow_clk_enable,uio_in, tmp3);
+ DFF_PWM PWM_DFF3(clk,slow_clk_enable,decrease_duty, tmp3);
  DFF_PWM PWM_DFF4(clk,slow_clk_enable,tmp3, tmp4); 
  assign duty_dec =  tmp3 & (~ tmp4) & slow_clk_enable;
  // vary the duty cycle using the debounced buttons above
@@ -54,10 +60,7 @@ module tt_um_Ziyi_Yuchen
    if(counter_PWM>=9) 
     counter_PWM <= 0;
  end
- assign uo_out = counter_PWM < DUTY_CYCLE ? 1:0;
- assign uio_out = 0;
- assign uio_oe = 0;
-
+ assign PWM_OUT = counter_PWM < DUTY_CYCLE ? 1:0;
 endmodule
 // Debouncing DFFs for push buttons on FPGA
 module DFF_PWM(clk,en,D,Q);
