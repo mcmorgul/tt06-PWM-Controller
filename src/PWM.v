@@ -13,9 +13,6 @@ module tt_um_Ziyi_Yuchen
  wire increase_duty = ui_in[0];
  wire decrease_duty = ui_in[1];
  reg PWM_OUT;
- assign uo_out = 0;
- assign uio_out = {7'b0, PWM_OUT};
- assign uio_oe = 8'b1;
  wire slow_clk_enable; // slow clock enable signal for debouncing FFs
  reg[27:0] counter_debounce=0;// counter for creating slow clock enable signals 
  wire tmp1,tmp2,duty_inc;// temporary flip-flop signals for debouncing the increasing button
@@ -61,9 +58,9 @@ module tt_um_Ziyi_Yuchen
     counter_PWM <= 0;
  end
  assign PWM_OUT = counter_PWM < DUTY_CYCLE ? 1:0;
- assign uo_out  = ui_in + uio_in;
- assign uio_out = 8'b0000_0000;
- assign uio_oe  = 8'b0000_0000;
+ assign uo_out = 0;
+ assign uio_out = {7'b0, PWM_OUT};
+ assign uio_oe = 8'b1;
 endmodule
 // Debouncing DFFs for push buttons on FPGA
 module DFF_PWM(clk,en,D,Q);
