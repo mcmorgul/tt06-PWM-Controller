@@ -59,7 +59,7 @@ module tt_um_Ziyi_Yuchen
  end
  assign PWM_OUT = counter_PWM < DUTY_CYCLE ? 1:0;
  assign uo_out = ui_in + uio_in;
- assign uio_out = 8'b0;
+ assign uio_out = {7'b0, PWM_OUT};
  assign uio_oe = 8'b0;
 endmodule
 // Debouncing DFFs for push buttons on FPGA
