@@ -1,4 +1,4 @@
-"""
+
 # SPDX-FileCopyrightText: © 2023 Uri Shaked <uri@tinytapeout.com>
 # SPDX-License-Identifier: MIT
 
@@ -45,7 +45,7 @@ async def test_counter(dut):
     await ClockCycles(dut.clk, 10)
     dut.rst_n.value = 1
     await ClockCycles(dut.clk, 2)
-
+"""
     dut._log.info("Testing counter")
     for i in range(256):
         assert dut.uo_out.value == dut.uio_out.value
