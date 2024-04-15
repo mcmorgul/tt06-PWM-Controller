@@ -63,17 +63,16 @@ module tt_um_Ziyi_Yuchen
    end
  end 
 
- always @(posedge clk or posedge rst_n) // added reset condition
+ always @(posedge clk)
  begin
-   if (!rst_n) // if reset is high
+   if (!rst_n)
+     counter_PWM <= 4'b0000;
+   else if (counter_PWM >= 9)
      counter_PWM <= 4'b0000;
    else
-   begin
      counter_PWM <= counter_PWM + 1;
-     if(counter_PWM>=9) 
-      counter_PWM <= 4'b0000;
-   end
  end
+
 
  assign PWM_OUT = counter_PWM < DUTY_CYCLE ? 1:0;
 endmodule
