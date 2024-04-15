@@ -63,7 +63,7 @@ module tt_um_Ziyi_Yuchen
    end
  end 
 
- always @(posedge clk or posedge reset) // added reset condition
+ always @(posedge clk or posedge rst_n) // added reset condition
  begin
    if (!rst_n) // if reset is high
      counter_PWM <= 0;
