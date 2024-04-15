@@ -24,45 +24,60 @@ module tt_um_Ziyi_Yuchen
  assign uo_out = ui_in + uio_in;
  assign uio_out = {7'b0, PWM_OUT};
  assign uio_oe = 8'b0;
- always @(posedge clk)
+ always @(posedge clk or posedge rst_n) // added reset condition
  begin
-   counter_debounce <= counter_debounce + 1;
-   //if(counter_debounce>=25000000) then  
-   // for running on FPGA -- comment when running simulation
-   if(counter_debounce>=1) 
-   // for running simulation -- comment when running on FPGA
-    counter_debounce <= 0;
+   if (!rst_n) // if reset is high
+   begin
+     counter_debounce <= 0;
+     counter_PWM <= 0;
+     DUTY_CYCLE <= 5;
+   end
+   else
+   begin
+     counter_debounce <= counter_debounce + 1;
+     if(counter_debounce>=1) 
+      counter_debounce <= 0;
+   end
  end
- // assign slow_clk_enable = counter_debounce == 25000000 ?1:0;
- // for running on FPGA -- comment when running simulation 
+
  assign slow_clk_enable = counter_debounce == 1 ?1:0;
- // for running simulation -- comment when running on FPGA
- // debouncing FFs for increasing button
+
  DFF_PWM PWM_DFF1(clk,slow_clk_enable,increase_duty,tmp1);
  DFF_PWM PWM_DFF2(clk,slow_clk_enable,tmp1, tmp2); 
  assign duty_inc =  tmp1 & (~ tmp2) & slow_clk_enable;
- // debouncing FFs for decreasing button
+
  DFF_PWM PWM_DFF3(clk,slow_clk_enable,decrease_duty, tmp3);
  DFF_PWM PWM_DFF4(clk,slow_clk_enable,tmp3, tmp4); 
  assign duty_dec =  tmp3 & (~ tmp4) & slow_clk_enable;
- // vary the duty cycle using the debounced buttons above
- always @(posedge clk)
+
+ always @(posedge clk or posedge rst_n) // added reset condition
  begin
-   if(duty_inc==1 && DUTY_CYCLE <= 9) 
-    DUTY_CYCLE <= DUTY_CYCLE + 1;// increase duty cycle by 10%
-   else if(duty_dec==1 && DUTY_CYCLE>=1) 
-    DUTY_CYCLE <= DUTY_CYCLE - 1;//decrease duty cycle by 10%
+   if (!rst_n) // if reset is high
+     DUTY_CYCLE <= 5;
+   else
+   begin
+     if(duty_inc==1 && DUTY_CYCLE <= 9) 
+      DUTY_CYCLE <= DUTY_CYCLE + 1;// increase duty cycle by 10%
+     else if(duty_dec==1 && DUTY_CYCLE>=1) 
+      DUTY_CYCLE <= DUTY_CYCLE - 1;//decrease duty cycle by 10%
+   end
  end 
-// Create 10MHz PWM signal with variable duty cycle controlled by 2 buttons 
- always @(posedge clk)
+
+ always @(posedge clk or posedge reset) // added reset condition
  begin
-   counter_PWM <= counter_PWM + 1;
-   if(counter_PWM>=9) 
-    counter_PWM <= 0;
+   if (!rst_n) // if reset is high
+     counter_PWM <= 0;
+   else
+   begin
+     counter_PWM <= counter_PWM + 1;
+     if(counter_PWM>=9) 
+      counter_PWM <= 0;
+   end
  end
+
  assign PWM_OUT = counter_PWM < DUTY_CYCLE ? 1:0;
 endmodule
-// Debouncing DFFs for push buttons on FPGA
+
 module DFF_PWM(clk,en,D,Q);
 input clk,en,D;
 output reg Q;
@@ -71,4 +86,5 @@ begin
  if(en==1) // slow clock enable signal 
   Q <= D;
 end 
-endmodule 
+endmodule
+
