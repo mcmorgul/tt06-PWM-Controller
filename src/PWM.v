@@ -30,7 +30,7 @@ module tt_um_Ziyi_Yuchen
    begin
      counter_debounce <= 28'd0000000000000000000000000000;
      counter_PWM <= 4'b0000;
-     DUTY_CYCLE = 4'b0101;
+     DUTY_CYCLE <= 4'b0101;
    end
    else
    begin
@@ -53,13 +53,17 @@ module tt_um_Ziyi_Yuchen
  always @(posedge clk or posedge rst_n) // added reset condition
  begin
    if (!rst_n) // if reset is high
-     DUTY_CYCLE = 4'b0101;
+     DUTY_CYCLE <= 4'b0101;
    else
    begin
      if(duty_inc==1 && DUTY_CYCLE <= 4'b1001) 
       DUTY_CYCLE <= DUTY_CYCLE + 4'b0001;// increase duty cycle by 10%
-	   else if(duty_dec==1 && DUTY_CYCLE>=4'b0001) 
+     else if(duty_dec==1 && DUTY_CYCLE>=4'b0001) 
       DUTY_CYCLE <= DUTY_CYCLE - 4'b0001;//decrease duty cycle by 10%
+     else
+     begin
+	DUTY_CYCLE <= 4'b0101;
+     end
    end
  end 
 
