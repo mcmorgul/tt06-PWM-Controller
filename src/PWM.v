@@ -61,9 +61,7 @@ module tt_um_Ziyi_Yuchen
      else if(duty_dec==1 && DUTY_CYCLE>=4'b0001) 
       DUTY_CYCLE <= DUTY_CYCLE - 4'b0001;//decrease duty cycle by 10%
      else
-     begin
 	DUTY_CYCLE <= 4'b0101;
-     end
    end
  end 
 
