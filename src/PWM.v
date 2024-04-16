@@ -35,8 +35,10 @@ module tt_um_Ziyi_Yuchen
    else
    begin
      counter_debounce <= counter_debounce + 28'b0000000000000000000000000001;
-	   if(counter_debounce>=28'b0000000000000000000000000001) 
-      counter_debounce <= 4'b0000;
+     if(counter_debounce>=28'b0000000000000000000000000001) 
+     counter_debounce <= 4'b0000;
+     else
+	DUTY_CYCLE <= 4'b0101;
    end
  end
 
