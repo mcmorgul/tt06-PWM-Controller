@@ -69,7 +69,7 @@ module tt_um_Ziyi_Yuchen
 
  always @(posedge clk)
  begin
-   if (!rst_n)
+   if (rst_n)
      counter_PWM <= 4'b0000;
    else if (counter_PWM >= 9)
      counter_PWM <= 4'b0000;
