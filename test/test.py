@@ -79,6 +79,11 @@ async def test_pwm_duty_cycle_changes(dut):
 
     for i in range(10):
         await ClockCycles(dut.clk, 10)
+        print(dut.uio_out.value)
+'''
+    for i in range(10):
+        await ClockCycles(dut.clk, 10)
         dut.ui_in.value = 0
         a = await count_high_cycles(10)
         print(a)
+'''
