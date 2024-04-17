@@ -81,7 +81,7 @@ async def test_pwm_duty_cycle_changes(dut):
     for i in range(256):
         dut.rst_n.value = 0
         a = await count_high_cycles(10)
-        assert a == 5, f"Expected initial 50% duty cycle, got {initial_high_count/10:.0%}"
+        assert a == 5, f"Expected initial 50% duty cycle, got {a/10:.0%}"
 
         
 
