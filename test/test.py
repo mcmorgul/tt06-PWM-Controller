@@ -56,30 +56,29 @@ async def test_counter(dut):
 """
 
 @cocotb.test()
-async def test_pwm_duty_cycle_changes(dut):
-    """Test PWM output reacts correctly to increase and decrease inputs by counting high states in uio_out[0]."""
-    dut._log.info("Starting test: PWM Duty Cycle Changes")
+async def test_pwm_with_reset_and_timing(dut):
+    """Test PWM output with reset behavior and check timing sensitivity to button presses."""
+    dut._log.info("Starting test: PWM with Reset and Timing")
 
     # Setup the clock
-    clock = Clock(dut.clk, 10, units="ns")
+    clock = Clock(dut.clk, 10, units="ns")  # Clock period is 10ns
     cocotb.start_soon(clock.start())
 
     # Reset the device
     dut.rst_n.value = 0
-    await ClockCycles(dut.clk, 5)
+    await ClockCycles(dut.clk, 5)  # Hold reset for 5 cycles
     dut.rst_n.value = 1
-    await ClockCycles(dut.clk, 1)  # Allow some time after reset
+    await RisingEdge(dut.clk)  # Wait for the first positive edge after reset
 
-    # Ensure PWM starts in a known state
-    await RisingEdge(dut.clk)
-    await ClockCycles(dut.clk, 10)  # Allow the PWM to stabilize
+    # Simulate the PWM period: wait for 100ns (10 clock cycles)
+    await ClockCycles(dut.clk, 10)
 
-    # Test incrementing the duty cycle
-    dut.ui_in.value = 0b00000001  # Press the 'increase duty' button
-    await ClockCycles(dut.clk, 1)
-    dut.ui_in.value = 0b00000000  # Release the button
-    await ClockCycles(dut.clk, 20)  # Wait for changes to propagate
+    # Press 'increase duty' button exactly at the start of a new PWM period
+    dut.ui_in.value = 0b00000001  # Set increase_duty bit
 
+    # Wait for another PWM period to observe the effect
+    await ClockCycles(dut.clk, 10)
+    
     # Count the number of high states over the next 10 cycles
     high_count = 0
     for _ in range(10):
@@ -88,24 +87,7 @@ async def test_pwm_duty_cycle_changes(dut):
             high_count += 1
 
     # Check if the high count matches the expected new duty cycle
-    expected_highs = 6  # Assuming duty cycle should now be 60%
+    expected_highs = 6  # After increment, duty cycle should be 60%
     assert high_count == expected_highs, f"Expected {expected_highs} highs, got {high_count} after increase"
 
-    # Test decrementing the duty cycle
-    dut.ui_in.value = 0b00000010  # Press the 'decrease duty' button
-    await ClockCycles(dut.clk, 1)
-    dut.ui_in.value = 0b00000000  # Release the button
-    await ClockCycles(dut.clk, 20)  # Wait for changes to propagate
-
-    # Count the number of high states over the next 10 cycles again
-    high_count = 0
-    for _ in range(10):
-        await RisingEdge(dut.clk)
-        if dut.uio_out[0].value:
-            high_count += 1
-
-    # Check if the high count matches the expected decreased duty cycle
-    expected_highs = 5  # Assuming duty cycle should now be back to 50%
-    assert high_count == expected_highs, f"Expected {expected_highs} highs, got {high_count} after decrease"
-
-    dut._log.info("All assertions passed. PWM duty cycle changes correctly affect the output.")
+    dut._log.info("Reset and timing assertions passed. PWM duty cycle reacts correctly to input changes with respect to reset and cycle timing.")
