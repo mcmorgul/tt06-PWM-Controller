@@ -71,7 +71,7 @@ async def test_pwm_duty_cycle_changes(dut):
     async def count_high_cycles(num_cycles):
         high_count = 0
         for _ in range(num_cycles):
-            yield RisingEdge(dut.clk)
+            await RisingEdge(dut.clk)
             if dut.uio_out.value.integer:
                 high_count += 1
         return high_count
