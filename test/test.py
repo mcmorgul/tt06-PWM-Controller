@@ -58,32 +58,43 @@ async def test_counter(dut):
 @cocotb.test()
 async def test_pwm_duty_cycle_changes(dut):
     """Test PWM output reacts correctly to increase and decrease inputs."""
-    dut._log.info("Start")
+    dut._log.info("Starting test: PWM Duty Cycle Changes")
     
+    # Generate a clock with a period of 10ns (100MHz)
     clock = Clock(dut.clk, 10, units="ns")
     cocotb.start_soon(clock.start())
 
+    # Reset the device
     dut.rst_n.value = 0
-    dut.ui_in.value = 0
-    
-    await ClockCycles(dut.clk, 100)
+    await ClockCycles(dut.clk, 5)
     dut.rst_n.value = 1
 
-    async def count_high_cycles(num_cycles):
-        high_count = 0
-        for i in range(num_cycles):
-            await ClockCycles(dut.clk, 10)
-            if dut.uio_out.value.integer:
-                high_count += 1
-        return high_count
+    # Initial conditions
+    dut.ui_in.value = 0b00000000  # Both increase and decrease buttons are not pressed
 
-    for i in range(10):
-        await ClockCycles(dut.clk, 10)
-        print(dut.uio_out.value)
-'''
-    for i in range(10):
-        await ClockCycles(dut.clk, 10)
-        dut.ui_in.value = 0
-        a = await count_high_cycles(10)
-        print(a)
-'''
+    # Ensure PWM output starts at the initial condition
+    await RisingEdge(dut.clk)
+    initial_duty_cycle = int(dut.DUTY_CYCLE.value)
+    assert initial_duty_cycle == 5, f"Expected initial duty cycle to be 5, got {initial_duty_cycle}"
+
+    # Press the 'increase duty' button
+    dut.ui_in.value = 0b00000001  # Set increase_duty bit
+    await ClockCycles(dut.clk, 2)  # Wait for a couple of clock cycles
+    dut.ui_in.value = 0b00000000  # Release the button
+    await ClockCycles(dut.clk, 10) # Wait for the PWM output to potentially update
+
+    # Check if the duty cycle has increased
+    increased_duty_cycle = int(dut.DUTY_CYCLE.value)
+    assert increased_duty_cycle == 6, f"Expected duty cycle to increase to 6, got {increased_duty_cycle}"
+
+    # Press the 'decrease duty' button
+    dut.ui_in.value = 0b00000010  # Set decrease_duty bit
+    await ClockCycles(dut.clk, 2)  # Wait for a couple of clock cycles
+    dut.ui_in.value = 0b00000000  # Release the button
+    await ClockCycles(dut.clk, 10) # Wait for the PWM output to potentially update
+
+    # Check if the duty cycle has decreased
+    decreased_duty_cycle = int(dut.DUTY_CYCLE.value)
+    assert decreased_duty_cycle == 5, f"Expected duty cycle to decrease to 5, got {decreased_duty_cycle}"
+
+    dut._log.info("All assertions passed. Duty cycle changes as expected.")
