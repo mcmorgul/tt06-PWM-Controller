@@ -53,6 +53,7 @@ module tt_um_Ziyi_Yuchen
 	 if (!rst_n)
 	    begin
             DUTY_CYCLE <= 4'b0101;
+	    counter_PWM <= 4'b0000;
 	    end
 	  else
 		begin
