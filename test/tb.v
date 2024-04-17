@@ -47,6 +47,7 @@ module tb ();
 
   // Input stimuli
  initial begin
+    ena = 1;
     ui_in[0] = 0;
     ui_in[1] = 0;
     forever begin
