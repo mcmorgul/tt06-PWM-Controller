@@ -46,16 +46,15 @@ module tb ();
   end
 
   // Input stimuli
-   initial begin
-   rst_n = 1;
-   #100 rst_n = 0;
-   #100 rst_n = 1;
-
-    // Test sequence for increasing and decreasing duty cycle
-   #100 ui_in[0] = 1;
-   #100 ui_in[0] = 0;
-   #100 ui_in[1] = 1;
-   #100 ui_in[1] = 0;
-  end
+ initial begin
+    ui_in[0] = 0;
+    ui_in[1] = 0;
+    forever begin
+        #100 ui_in[0] = 1;  // After 100 cycles, set ui_in[0] to 1
+        #100 ui_in[0] = 0;  // After another 100 cycles, set ui_in[0] to 0
+        #100 ui_in[1] = 1;  // After another 100 cycles, set ui_in[1] to 1
+        #100 ui_in[1] = 0;  // After another 100 cycles, set ui_in[1] to 0
+    end
+end
 
 endmodule
