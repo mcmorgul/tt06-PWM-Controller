@@ -9,11 +9,11 @@ You can also include images in this folder and reference them in the markdown. E
 
 ## How it works
 
-If `sel` is high, then a counter is output on the output pins and the bidirectional pins (`data_o = counter_o = counter`).
-If `sel` is low, the bidirectional pins are mirrored to the output pins (`data_o` = `data_i`).
+The PWM generates a 10 MHz PWM signal whose duty cycle can be adjusted using two buttons.
+Uses a slow clock enable signal and a series of D flip-flops to stabilize the button inputs. 
+The debounced signals then control the increase or decrease of the PWM duty cycle.
+The PWM duty cycle can be increased or decreased in steps, constrained between 10% and 90%.
 
 ## How to test
 
-Set `sel` high and observe that the counter is output on the output pins (`data_o`) and the bidirectional pins (`counter_o`).
-
-Set `sel` low and observe that the bidirectional pins are mirrored to the output pins (`data_o` = `data_i`).
+Change the inputs ui_in to simulate button presses and check if the PWM duty cycle increases or decreases as expected.
