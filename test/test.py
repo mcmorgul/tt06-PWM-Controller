@@ -68,7 +68,7 @@ async def test_pwm_duty_cycle_changes(dut):
     dut.rst_n.value = 1
     await ClockCycles(dut.clk, 10)
 
-    def count_high_cycles(num_cycles):
+    async def count_high_cycles(num_cycles):
         high_count = 0
         for _ in range(num_cycles):
             yield RisingEdge(dut.clk)
