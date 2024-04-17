@@ -20,7 +20,7 @@ The PWM duty cycle can be increased or decreased in steps, constrained between 1
 Change the inputs ui_in to simulate button presses and check if the PWM duty cycle increases or decreases as expected.
 
 ## Verilog File
-sec/PWM.v
+src/PWM.v
 
 
 
