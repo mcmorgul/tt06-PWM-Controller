@@ -1,9 +1,9 @@
 # Tiny Tapeout project information
 project:
-  title:        "TinyTapeout 06 Factory Test"      # Project title
-  author:       "Sylvain Munaut"      # Your name
+  title:        "PWM Controller"      # Project title
+  author:       "Ziyi Zhao, Yuchen Ma"      # Your name
   discord:      ""      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
-  description:  "Factory test module"      # One line description of what your project does
+  description:  " A Low-Cost Pulse Width Modulation (PWM) Controller"      # One line description of what your project does
   language:     "Verilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
   clock_hz:     0       # Clock frequency in Hz (or 0 if not applicable)
 
@@ -20,8 +20,8 @@ project:
 # The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
 pinout:
   # Inputs
-  ui[0]: ""
-  ui[1]: ""
+  ui[0]: "increase_duty"
+  ui[1]: "decrease_duty"
   ui[2]: ""
   ui[3]: ""
   ui[4]: ""
@@ -40,7 +40,7 @@ pinout:
   uo[7]: ""
 
   # Bidirectional pins
-  uio[0]: ""
+  uio[0]: "PWM_OUT"
   uio[1]: ""
   uio[2]: ""
   uio[3]: ""
