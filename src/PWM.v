@@ -12,7 +12,7 @@ module tt_um_Ziyi_Yuchen
 
  wire increase_duty = ui_in[0];
  wire decrease_duty = ui_in[1];
- reg PWM_OUT;
+ reg PWM_OUT=1;
  wire slow_clk_enable; // slow clock enable signal for debouncing FFs
  reg[27:0] counter_debounce=0;// counter for creating slow clock enable signals 
  wire tmp1,tmp2,duty_inc;// temporary flip-flop signals for debouncing the increasing button
