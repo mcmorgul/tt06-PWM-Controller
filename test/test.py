@@ -18,6 +18,7 @@ async def test_pwm_with_reset_and_timing(dut):
     cocotb.start_soon(clock.start())
 
     # Reset the device
+    dut.ena.value = 1
     dut.rst_n.value = 0
     await ClockCycles(dut.clk, 5)  # Hold reset for 5 cycles
     dut.rst_n.value = 1
