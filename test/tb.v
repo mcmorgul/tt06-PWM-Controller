@@ -41,22 +41,5 @@ module tb ();
       .clk    (clk),      // clock
      .rst_n  (rst_n)     // not reset
   );
-   initial begin
-    clk = 0;
-    forever #5 clk = ~clk;
-  end
-
-  // Input stimuli
- initial begin
-    ena = 1;
-    ui_in[0] = 0;
-    ui_in[1] = 0;
-    forever begin
-        #100 ui_in[0] = 1;  // After 100 cycles, set ui_in[0] to 1
-        #100 ui_in[0] = 0;  // After another 100 cycles, set ui_in[0] to 0
-        #100 ui_in[1] = 1;  // After another 100 cycles, set ui_in[1] to 1
-        #100 ui_in[1] = 0;  // After another 100 cycles, set ui_in[1] to 0
-    end
-end
 
 endmodule
